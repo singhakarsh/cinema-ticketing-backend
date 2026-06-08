@@ -118,10 +118,12 @@
 
         .movie-slider {
             display: flex;
-            gap: 20px;
+            gap: 24px;
             overflow-x: auto;
-            padding-bottom: 15px;
+            padding: 20px 10px 30px 10px;
+            /* Increased top/bottom padding so floating cards don't clip */
             margin-bottom: 40px;
+            scroll-behavior: smooth;
         }
 
         .movie-slider::-webkit-scrollbar {
@@ -137,22 +139,33 @@
             min-width: 180px;
             max-width: 180px;
             height: 260px;
-            border-radius: 10px;
+            border-radius: 12px;
             background-size: cover;
             background-position: center;
             cursor: pointer;
-            transition: transform 0.3s ease, border-color 0.3s ease;
-            border: 3px solid transparent;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+
+            /* High-performance hardware acceleration transitions */
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                border-color 0.4s ease,
+                box-shadow 0.4s ease;
+
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            position: relative;
         }
 
         .movie-card:hover {
-            transform: scale(1.05);
+            transform: translateY(-10px) scale(1.04);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6),
+                0 0 20px rgba(255, 255, 255, 0.1);
         }
 
         .movie-card.active {
             border-color: #a55eea;
-            transform: scale(1.05);
+            transform: translateY(-8px) scale(1.04);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7),
+                0 0 25px rgba(165, 94, 234, 0.45);
         }
 
         /* 1. The Booking Canvas Container - Sleek Glassmorphism look */
@@ -194,40 +207,100 @@
         /* 4. Luxury Seating Grid Layout */
         .seating-grid {
             display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+            align-items: center;
+            width: 100%;
+        }
+
+        /* 2. Individual Seat Row Wrapper */
+        .seat-row {
+            display: flex;
             gap: 16px;
-            margin-bottom: 40px;
             justify-content: center;
+            align-items: center;
+        }
+
+        /* 3. Row Label styling (A, B, C...) */
+        .row-label {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.3);
+            width: 30px;
+            text-align: center;
+            text-transform: uppercase;
         }
 
         /* 5. The Seat Chairs - Deep Glass-metallic style buttons */
+        /* 4. Luxury Seating Chairs - Deep metallic squares */
         .seat-btn {
-            background: rgba(38, 222, 129, 0.1);
+            background: rgba(38, 222, 129, 0.08);
             color: #26de81;
-            border: 1px solid rgba(38, 222, 129, 0.4);
-            padding: 16px 24px;
-            font-size: 1rem;
+            border: 1px solid rgba(38, 222, 129, 0.3);
+            width: 54px;
+            height: 50px;
+            font-size: 0.9rem;
             font-weight: 700;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Custom human touch hover: clean glow instead of standard stretching */
         .seat-btn:hover {
             background: #26de81;
             color: #06060c;
-            box-shadow: 0 0 25px rgba(38, 222, 129, 0.6);
-            transform: translateY(-3px);
+            box-shadow: 0 0 20px rgba(38, 222, 129, 0.5);
+            transform: translateY(-2px);
         }
 
-        /* Taken Seats - Minimalist matte red instead of blinding bright neon blocks */
+        /* Taken Seats - Clean matte look */
         .seat-btn.occupied {
-            background: rgba(255, 71, 87, 0.08) !important;
-            color: rgba(255, 71, 87, 0.4) !important;
+            background: rgba(255, 71, 87, 0.06) !important;
+            color: rgba(255, 71, 87, 0.35) !important;
             border: 1px solid rgba(255, 71, 87, 0.15) !important;
             cursor: not-allowed;
             transform: none !important;
             box-shadow: none !important;
+        }
+
+        /* 5. Custom Seat Status Legend Component */
+        .seating-legend {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 35px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: #8e8e9f;
+            font-weight: 500;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        .legend-dot.available {
+            background: rgba(38, 222, 129, 0.1);
+            border: 1px solid #26de81;
+        }
+
+        .legend-dot.occupied {
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid #ff4757;
         }
 
         .control-panel {
@@ -263,10 +336,159 @@
             font-style: italic;
             margin: 20px 0;
         }
+
+        /* 🌟 Custom Toast Notification Container */
+        .toast-container {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .toast-card {
+            background: linear-gradient(135deg, rgba(30, 30, 50, 0.75) 0%, rgba(15, 15, 30, 0.9) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 16px 28px;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            /* CSS Smooth Slide In/Out animations */
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        /* State class to slide the card into view */
+        .toast-card.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        /* 🌟 Custom Blur Overlay Backdrop */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(4, 4, 8, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Active overlay class */
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* 🌟 Custom Glassmorphic Modal Box */
+        .confirm-modal {
+            background: linear-gradient(135deg, rgba(25, 25, 45, 0.85) 0%, rgba(12, 12, 25, 0.95) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 30px 40px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+
+            /* Pop-in scaling animation scaling state */
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+        }
+
+        .modal-overlay.active .confirm-modal {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-text {
+            font-size: 0.95rem;
+            color: #8e8e9f;
+            line-height: 1.5;
+            margin-bottom: 28px;
+        }
+
+        /* Modal action layout button row */
+        .modal-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .modal-btn.cancel {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-btn.cancel:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .modal-btn.confirm-action {
+            background: #ff4757;
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+        }
+
+        .modal-btn.confirm-action:hover {
+            background: #ff6b81;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
+        }
     </style>
 </head>
 
 <body>
+
+    <div class="toast-container" id="toast-wrapper"></div>
+    <div class="modal-overlay" id="confirm-modal-overlay">
+        <div class="confirm-modal">
+            <div class="modal-title">🔄 Reset Seating Layout?</div>
+            <div class="modal-text">Are you sure you want to wipe out all current active bookings for this specific film
+                showtime? This action cannot be undone.</div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" id="modal-cancel-btn">Cancel</button>
+                <button class="modal-btn confirm-action" id="modal-confirm-btn">Yes, Reset</button>
+            </div>
+        </div>
+    </div>
 
     <div class="navbar">
         <div class="nav-links">
@@ -292,6 +514,18 @@
         <div class="booking-workspace">
             <div class="theater-screen-glow"></div>
             <div class="showtime-banner" id="showtime-text">Checking Available Showtimes...</div>
+
+            <div class="seating-legend">
+                <div class="legend-item">
+                    <div class="legend-dot available"></div>
+                    <span>Available</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot occupied"></div>
+                    <span>Occupied</span>
+                </div>
+            </div>
+
             <div class="seating-grid" id="seats-layout"></div>
             <div class="control-panel" id="control-panel"></div>
         </div>
@@ -394,26 +628,61 @@
             const grid = document.getElementById('seats-layout');
             grid.innerHTML = '';
 
+            // Group our seats array dynamically by their prefix row letter
+            const rowsMap = {};
             seats.forEach(seat => {
-                const btn = document.createElement('button');
-                btn.className = 'seat-btn';
-                btn.innerText = seat.seatNumber;
-
-                if (seat.reserved === true || seat.reserved === "true") {
-                    btn.classList.add('occupied');
-                    btn.disabled = true;
+                // If seatNumber is "A-1", split('-')[0] gives us "A"
+                const rowLetter = seat.seatNumber.includes('-') ? seat.seatNumber.split('-')[0] : 'A';
+                if (!rowsMap[rowLetter]) {
+                    rowsMap[rowLetter] = [];
                 }
+                rowsMap[rowLetter].push(seat);
+            });
 
-                btn.onclick = async () => {
-                    const postResponse = await fetch(`/api/bookings/book/${seat.id}`, { method: 'POST' });
-                    const resultText = await postResponse.text();
+            // Loop through each row in our sorted map and build a physical row row
+            Object.keys(rowsMap).sort().forEach(rowLetter => {
+                const rowWrapper = document.createElement('div');
+                rowWrapper.className = 'seat-row';
 
-                    alert(resultText);
-                    // Dynamically refresh the seat view map state instead of hard reloading whole window
-                    await loadSeatsForShowtime(currentActiveShowtimeId);
-                };
+                // Left row identifier label
+                const leftLabel = document.createElement('div');
+                leftLabel.className = 'row-label';
+                leftLabel.innerText = rowLetter;
+                rowWrapper.appendChild(leftLabel);
 
-                grid.appendChild(btn);
+                // Append the chairs inside this row
+                rowsMap[rowLetter].forEach(seat => {
+                    const btn = document.createElement('button');
+                    btn.className = 'seat-btn';
+
+                    // Display just the number component on the chair face (e.g. "1" instead of "A-1")
+                    const seatNumDisplay = seat.seatNumber.includes('-') ? seat.seatNumber.split('-')[1] : seat.seatNumber;
+                    btn.innerText = seatNumDisplay;
+
+                    if (seat.reserved === true || seat.reserved === "true") {
+                        btn.classList.add('occupied');
+                        btn.disabled = true;
+                    }
+
+                    btn.onclick = async () => {
+                        const postResponse = await fetch(`/api/bookings/book/${seat.id}`, { method: 'POST' });
+                        const resultText = await postResponse.text();
+
+                        // 🌟 Replace alert(resultText); with this:
+                        showToast(resultText);
+                        await loadSeatsForShowtime(currentActiveShowtimeId);
+                    };
+
+                    rowWrapper.appendChild(btn);
+                });
+
+                // Right side row label for complete spatial balance
+                const rightLabel = document.createElement('div');
+                rightLabel.className = 'row-label';
+                rightLabel.innerText = rowLetter;
+                rowWrapper.appendChild(rightLabel);
+
+                grid.appendChild(rowWrapper);
             });
         }
 
@@ -426,16 +695,69 @@
             resetBtn.className = 'reset-btn';
             resetBtn.innerText = '🔄 Reset Show Layout';
 
-            resetBtn.onclick = async () => {
-                if (confirm("Are you sure you want to clear all bookings for this specific show schedule?")) {
-                    const response = await fetch(`/api/bookings/reset/${showtimeId}`, { method: 'PUT' });
-                    const txt = await response.text();
-                    alert(txt);
-                    await loadSeatsForShowtime(showtimeId);
-                }
+            resetBtn.onclick = () => {
+                const overlay = document.getElementById('confirm-modal-overlay');
+                const cancelBtn = document.getElementById('modal-cancel-btn');
+                const confirmBtn = document.getElementById('modal-confirm-btn');
+
+                // 1. Reveal our sleek custom glass blur dialog container
+                overlay.classList.add('active');
+
+                // 2. Clear out old attached events to prevent multi-firing triggers
+                cancelBtn.onclick = null;
+                confirmBtn.onclick = null;
+
+                // 3. Wire up the clean exit action handler
+                cancelBtn.onclick = () => {
+                    overlay.classList.remove('active');
+                };
+
+                // 4. Wire up the confirmed network cycle execution
+                confirmBtn.onclick = async () => {
+                    overlay.classList.remove('active'); // Pull down overlay view
+
+                    try {
+                        const response = await fetch(`/api/bookings/reset/${showtimeId}`, { method: 'PUT' });
+                        const txt = await response.text();
+
+                        // Show our custom sliding toast notification banner
+                        showToast(txt);
+
+                        // Force live layout update grid rendering state instantly
+                        await loadSeatsForShowtime(showtimeId);
+                    } catch (err) {
+                        console.error("Failed to clear layout state indices:", err);
+                    }
+                };
             };
 
             panel.appendChild(resetBtn);
+        }
+
+        // Modern custom human-coded replacement for browser alerts
+        function showToast(message) {
+            const container = document.getElementById('toast-wrapper');
+
+            // Create a physical card element on the fly
+            const toast = document.createElement('div');
+            toast.className = 'toast-card';
+            toast.innerText = message;
+
+            container.appendChild(toast);
+
+            // Force a minor browser layout recalculation step to trigger the CSS transition
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 50);
+
+            // Automatically clean up the card and slide it back out after 4 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                // Remove the element from the DOM tree completely once slide-out completes
+                setTimeout(() => {
+                    toast.remove();
+                }, 400);
+            }, 4000);
         }
 
         // Initialize dashboard app tracking layout automatically
