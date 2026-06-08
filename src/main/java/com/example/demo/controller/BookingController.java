@@ -36,4 +36,18 @@ public class BookingController {
 
         return "🎟️ Success! Ticket confirmed for Seat " + seat.getSeatNumber() + ". Enjoy your movie!";
     }
+
+    // This endpoint resets all seats for a specific showtime back to available
+    @PutMapping("/reset/{showtimeId}")
+    public String resetSeats(@PathVariable Long showtimeId) {
+        // Fetch all seats linked to this showtime
+        java.util.List<Seat> seats = seatRepository.findByShowtimeIdOrderBySeatNumberAsc(showtimeId);
+
+        // Loop through each seat and flip its reservation status back to false
+        for (Seat seat : seats) {
+            seat.setReserved(false);
+            seatRepository.save(seat);
+        }
+        return "🔄 Theater layout reset successfully! All seats are now open.";
+    }
 }

@@ -30,33 +30,52 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         if (movieRepository.count() == 0) {
-            System.out.println("🎬 Database is empty! Injecting premier sample data...");
+            System.out.println("🎬 Database is empty! Injecting premium themed movie data...");
 
-            // Save Movies
-            Movie sciFi = new Movie("Interstellar", "Sci-Fi", 169, "English");
-            Movie action = new Movie("The Dark Knight", "Action", 152, "English");
-            Movie anime = new Movie("Spirited Away", "Animation", 125, "Japanese");
+            // We pass: (Title, Genre, Duration, Language, PosterImage, BannerImage)
+            Movie interstellar = new Movie(
+                    "Interstellar", "Sci-Fi", 169, "English",
+                    "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=400", // Starry sky poster
+                    "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=1200" // Massive deep space nebula
+                                                                                          // banner
+            );
 
-            movieRepository.save(sciFi);
-            movieRepository.save(action);
+            Movie batman = new Movie(
+                    "The Dark Knight", "Action", 152, "English",
+                    "https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400", // Dark moody poster
+                    "https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=1200" // Dark city skyline banner
+            );
+
+            Movie anime = new Movie(
+                    "Spirited Away", "Animation", 125, "Japanese",
+                    "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400", // Creative artistic poster
+                    "https://images.unsplash.com/photo-1528164344705-47542687000d?w=1200" // Beautiful classic Japan
+                                                                                          // neon/nature banner
+            );
+
+            movieRepository.save(interstellar);
+            movieRepository.save(batman);
             movieRepository.save(anime);
 
-            // Save Showtime
-            Showtime eveningShow = new Showtime(sciFi, "Audi Screen 1", LocalDateTime.of(2026, 6, 10, 18, 30), 250.00);
-            showtimeRepository.save(eveningShow);
-            System.out.println("✅ Successfully saved movies and linked showtime!");
+            // Create a Relational Showtime for Interstellar (Movie 1)
+            Showtime show1 = new Showtime(interstellar, "Audi Screen 1", LocalDateTime.of(2026, 6, 10, 18, 30), 250.00);
+            showtimeRepository.save(show1);
 
-            // 3. NEW STEP: Automatically generate a row of seats for this specific show!
-            System.out.println("💺 Generating empty seats for Audi Screen 1...");
+            // NEW: Create a Relational Showtime for The Dark Knight (Movie 2)
+            Showtime show2 = new Showtime(batman, "IMAX Screen 2", LocalDateTime.of(2026, 6, 10, 21, 00), 350.00);
+            showtimeRepository.save(show2);
 
-            // Let's create seats A-1 through A-5 using a simple loop
+            // Generate Seats for Showtime 1 (Interstellar)
             for (int i = 1; i <= 5; i++) {
-                String seatNo = "A-" + i; // This will create "A-1", "A-2", etc.
-                Seat ticketSeat = new Seat(eveningShow, seatNo); // Linked directly to our showtime
-                seatRepository.save(ticketSeat);
+                seatRepository.save(new Seat(show1, "A-" + i));
             }
 
-            System.out.println("✅ Seat generation complete! 5 empty seats are now live and unreserved.");
+            // NEW: Generate Seats for Showtime 2 (The Dark Knight)
+            for (int i = 1; i <= 5; i++) {
+                seatRepository.save(new Seat(show2, "B-" + i));
+            }
+
+            System.out.println("✅ Themed data injection complete with separate showtimes and seat grids!");
         }
     }
 }

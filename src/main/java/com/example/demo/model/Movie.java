@@ -16,16 +16,39 @@ public class Movie {
     private String genre;
     private int durationMinutes;
     private String language;
+    private String posterUrl; // For the vertical cards at the bottom
+    private String bannerUrl; // For the big immersive background image
 
     // Standard Boilerplate Constructors
     public Movie() {
     }
 
-    public Movie(String title, String genre, int durationMinutes, String language) {
+    // Update your existing constructor or add this one so we can inject images
+    // easily:
+    public Movie(String title, String genre, int durationMinutes, String language, String posterUrl, String bannerUrl) {
         this.title = title;
         this.genre = genre;
         this.durationMinutes = durationMinutes;
         this.language = language;
+        this.posterUrl = posterUrl;
+        this.bannerUrl = bannerUrl;
+    }
+
+    // --- Add Getters and Setters for the new fields ---
+    public String getPosterUrl() {
+        return posterUrl;
+    }
+
+    public void setPosterUrl(String posterUrl) {
+        this.posterUrl = posterUrl;
+    }
+
+    public String getBannerUrl() {
+        return bannerUrl;
+    }
+
+    public void setBannerUrl(String bannerUrl) {
+        this.bannerUrl = bannerUrl;
     }
 
     // Getters and Setters

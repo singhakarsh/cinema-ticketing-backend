@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineVerse Premium | Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #06060c;
+            color: #ffffff;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            transition: background 0.5s ease;
+        }
+
+        /* Nav Bar styling matching streaming theme */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 60px;
+            position: absolute;
+            width: 100%;
+            z-index: 10;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links span {
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .nav-links span:hover,
+        .nav-links span.active {
+            opacity: 1;
+            color: #a55eea;
+        }
+
+        /* Immersive Banner Background */
+        .hero-banner {
+            height: 70vh;
+            width: 100%;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 60px;
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to right, rgba(6, 6, 12, 0.95) 20%, rgba(6, 6, 12, 0.3) 50%, rgba(6, 6, 12, 0.95) 90%),
+                linear-gradient(to bottom, transparent 60%, #06060c 100%);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1.1;
+        }
+
+        .hero-meta {
+            font-size: 1rem;
+            color: #26de81;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        /* Main Workspace Container */
+        .main-content {
+            padding: 0 60px 60px 60px;
+            margin-top: -50px;
+            position: relative;
+            z-index: 3;
+        }
+
+        /* Movie Selection Section Slider */
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .movie-slider {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+        }
+
+        .movie-slider::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .movie-slider::-webkit-scrollbar-thumb {
+            background: #2a2a40;
+            border-radius: 10px;
+        }
+
+        .movie-card {
+            min-width: 180px;
+            max-width: 180px;
+            height: 260px;
+            border-radius: 10px;
+            background-size: cover;
+            background-position: center;
+            cursor: pointer;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            border: 3px solid transparent;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .movie-card:hover {
+            transform: scale(1.05);
+        }
+
+        .movie-card.active {
+            border-color: #a55eea;
+            transform: scale(1.05);
+        }
+
+        /* 1. The Booking Canvas Container - Sleek Glassmorphism look */
+        .booking-workspace {
+            background: linear-gradient(135deg, rgba(20, 20, 35, 0.65) 0%, rgba(10, 10, 20, 0.85) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            margin-top: 20px;
+            position: relative;
+        }
+
+        /* 2. The Theater Screen Vector - Adds a realistic architectural curve */
+        .theater-screen-glow {
+            width: 70%;
+            height: 4px;
+            background: linear-gradient(to right, transparent, #a55eea, transparent);
+            box-shadow: 0 0 20px #a55eea;
+            border-radius: 50%;
+            margin-bottom: 35px;
+        }
+
+        /* 3. The Active Showtime Text Header Banner */
+        .showtime-banner {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #8e8e9f;
+            letter-spacing: 0.5px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        /* 4. Luxury Seating Grid Layout */
+        .seating-grid {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 40px;
+            justify-content: center;
+        }
+
+        /* 5. The Seat Chairs - Deep Glass-metallic style buttons */
+        .seat-btn {
+            background: rgba(38, 222, 129, 0.1);
+            color: #26de81;
+            border: 1px solid rgba(38, 222, 129, 0.4);
+            padding: 16px 24px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Custom human touch hover: clean glow instead of standard stretching */
+        .seat-btn:hover {
+            background: #26de81;
+            color: #06060c;
+            box-shadow: 0 0 25px rgba(38, 222, 129, 0.6);
+            transform: translateY(-3px);
+        }
+
+        /* Taken Seats - Minimalist matte red instead of blinding bright neon blocks */
+        .seat-btn.occupied {
+            background: rgba(255, 71, 87, 0.08) !important;
+            color: rgba(255, 71, 87, 0.4) !important;
+            border: 1px solid rgba(255, 71, 87, 0.15) !important;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .control-panel {
+            display: flex;
+            gap: 20px;
+        }
+
+        /* 6. The Control Board Panel Action Button */
+        .reset-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            opacity: 0.6;
+            padding: 12px 26px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            opacity: 1;
+            border-color: #ff4757;
+            color: #ff4757;
+            box-shadow: 0 0 15px rgba(255, 71, 87, 0.2);
+        }
+
+        .no-shows-msg {
+            font-size: 1.1rem;
+            color: #8e8e9f;
+            font-style: italic;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="nav-links">
+            <span class="active">DASHBOARD</span>
+            <span>MOVIES</span>
+            <span>SERIES</span>
+            <span>KIDS</span>
+        </div>
+    </div>
+
+    <div class="hero-banner" id="hero-bg">
+        <div class="hero-content">
+            <h1 class="hero-title" id="hero-title">Loading...</h1>
+            <div class="hero-meta" id="hero-genre">Genre: --</div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="section-title">MY LIST</div>
+        <div class="movie-slider" id="movie-list-container"></div>
+
+        <div class="section-title">BOOKING WORKSPACE</div>
+        <div class="booking-workspace">
+            <div class="theater-screen-glow"></div>
+            <div class="showtime-banner" id="showtime-text">Checking Available Showtimes...</div>
+            <div class="seating-grid" id="seats-layout"></div>
+            <div class="control-panel" id="control-panel"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentActiveShowtimeId = null;
+
+        // 1. Initial boot up cycle: Fetch all movies to build layout cards
+        async function initApp() {
+            try {
+                const response = await fetch('/api/movies');
+                const movies = await response.json();
+
+                if (movies.length === 0) return;
+
+                renderMovieCards(movies);
+                // Default view maps directly onto our premier film (ID: 1)
+                selectMovie(movies[0]);
+            } catch (err) {
+                console.error("Pipeline failure connecting to backend maps:", err);
+            }
+        }
+
+        // 2. Render dynamic movie cards down into the horizontal scroll container
+        function renderMovieCards(movies) {
+            const container = document.getElementById('movie-list-container');
+            container.innerHTML = '';
+
+            movies.forEach(movie => {
+                const card = document.createElement('div');
+                card.className = 'movie-card';
+                card.id = `movie-card-${movie.id}`;
+                card.style.backgroundImage = `url('${movie.posterUrl}')`;
+
+                card.onclick = () => {
+                    // Strip old active selections and establish new card outline
+                    document.querySelectorAll('.movie-card').forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    selectMovie(movie);
+                };
+
+                container.appendChild(card);
+            });
+
+            // Mark the very first item as visual active card baseline
+            if (container.firstChild) container.firstChild.classList.add('active');
+        }
+
+        // 3. Main theme shifting pipeline step when card click event triggers
+        async function selectMovie(movie) {
+            // Update the giant immersive top background banner
+            document.getElementById('hero-bg').style.backgroundImage = `url('${movie.bannerUrl}')`;
+            document.getElementById('hero-title').innerText = movie.title;
+            document.getElementById('hero-genre').innerText = `✨ ${movie.genre} | Language: ${movie.language} | 🕒 ${movie.durationMinutes} mins`;
+
+            // Reset workspace view fields
+            document.getElementById('seats-layout').innerHTML = '';
+            document.getElementById('control-panel').innerHTML = '';
+            currentActiveShowtimeId = null;
+
+            // Call our new custom filtered backend query method!
+            try {
+                const response = await fetch(`/api/showtimes/movie/${movie.id}`);
+                const showtimes = await response.json();
+
+                if (showtimes.length === 0) {
+                    document.getElementById('showtime-text').innerText = "🚫 No active showtimes available for this title today.";
+                    return;
+                }
+
+                // If showtimes exist, grab the first scheduled layout option
+                const activeShow = showtimes[0];
+                currentActiveShowtimeId = activeShow.id;
+
+                document.getElementById('showtime-text').innerText =
+                    `⏰ Location: ${activeShow.screenName} | Price: ₹${activeShow.ticketPrice} | Showtime ID: ${activeShow.id}`;
+
+                // Fetch real-time seat allocations for this specific showtime id
+                await loadSeatsForShowtime(activeShow.id);
+                renderResetControl(activeShow.id);
+            } catch (err) {
+                console.error("Error loading show schedules:", err);
+            }
+        }
+
+        // 4. Fetch genuine PostgreSQL seat allocations for the active showtime
+        async function loadSeatsForShowtime(showtimeId) {
+            try {
+                const response = await fetch(`/api/seats/showtime/${showtimeId}`);
+                const seats = await response.json();
+                renderSeats(seats);
+            } catch (err) {
+                console.error("Error fetching live seat records:", err);
+            }
+        }
+
+        // 5. Paint sorted interactive seating array rows onto dashboard layout
+        function renderSeats(seats) {
+            const grid = document.getElementById('seats-layout');
+            grid.innerHTML = '';
+
+            seats.forEach(seat => {
+                const btn = document.createElement('button');
+                btn.className = 'seat-btn';
+                btn.innerText = seat.seatNumber;
+
+                if (seat.reserved === true || seat.reserved === "true") {
+                    btn.classList.add('occupied');
+                    btn.disabled = true;
+                }
+
+                btn.onclick = async () => {
+                    const postResponse = await fetch(`/api/bookings/book/${seat.id}`, { method: 'POST' });
+                    const resultText = await postResponse.text();
+
+                    alert(resultText);
+                    // Dynamically refresh the seat view map state instead of hard reloading whole window
+                    await loadSeatsForShowtime(currentActiveShowtimeId);
+                };
+
+                grid.appendChild(btn);
+            });
+        }
+
+        // 6. Build the dynamic reset control utility
+        function renderResetControl(showtimeId) {
+            const panel = document.getElementById('control-panel');
+            panel.innerHTML = '';
+
+            const resetBtn = document.createElement('button');
+            resetBtn.className = 'reset-btn';
+            resetBtn.innerText = '🔄 Reset Show Layout';
+
+            resetBtn.onclick = async () => {
+                if (confirm("Are you sure you want to clear all bookings for this specific show schedule?")) {
+                    const response = await fetch(`/api/bookings/reset/${showtimeId}`, { method: 'PUT' });
+                    const txt = await response.text();
+                    alert(txt);
+                    await loadSeatsForShowtime(showtimeId);
+                }
+            };
+
+            panel.appendChild(resetBtn);
+        }
+
+        // Initialize dashboard app tracking layout automatically
+        window.onload = initApp;
+    </script>
+</body>
+
+</html>

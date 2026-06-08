@@ -2,9 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Showtime;
 import com.example.demo.repository.ShowtimeRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
@@ -20,5 +18,11 @@ public class ShowtimeController {
     @GetMapping
     public List<Showtime> getAllShowtimes() {
         return showtimeRepository.findAll();
+    }
+
+    // Capitalized the 'I' to make it findByMovieId
+    @GetMapping("/movie/{movieId}")
+    public List<Showtime> getShowtimesByMovie(@PathVariable Long movieId) {
+        return showtimeRepository.findByMovieId(movieId);
     }
 }
