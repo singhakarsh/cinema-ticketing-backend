@@ -472,6 +472,87 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
         }
+
+        /* 1. Layout Splitter - Positions seating and summary side-by-side */
+        .workspace-split {
+            display: flex;
+            gap: 50px;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* 2. Sleek Checkout Summary Card Panel */
+        .checkout-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 30px;
+            min-width: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+
+        /* Reveals the card smoothly when a seat is chosen */
+        .checkout-card.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+
+        .checkout-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 10px;
+            color: #a55eea;
+        }
+
+        .checkout-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .checkout-label {
+            color: #8e8e9f;
+        }
+
+        .checkout-value {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Premium Proceed Action Button */
+        .book-now-btn {
+            background: #26de81;
+            color: #06060c;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(38, 222, 129, 0.25);
+        }
+
+        .book-now-btn:hover {
+            background: #2bcbba;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(43, 203, 186, 0.4);
+        }
     </style>
 </head>
 
@@ -517,22 +598,37 @@
 
             <div class="seating-legend">
                 <div class="legend-item">
-                    <div class="legend-dot available"></div>
-                    <span>Available</span>
+                    <div class="legend-dot available"></div><span>Available</span>
                 </div>
                 <div class="legend-item">
-                    <div class="legend-dot occupied"></div>
-                    <span>Occupied</span>
+                    <div class="legend-dot occupied"></div><span>Occupied</span>
                 </div>
             </div>
 
-            <div class="seating-grid" id="seats-layout"></div>
-            <div class="control-panel" id="control-panel"></div>
+            <div class="workspace-split">
+                <div class="seating-grid" id="seats-layout"></div>
+
+                <div class="checkout-card" id="checkout-panel">
+                    <div class="checkout-title">🎟️ Ticket Summary</div>
+                    <div class="checkout-row">
+                        <span class="checkout-label">Selected Seat</span>
+                        <span class="checkout-value" id="summary-seat-num">--</span>
+                    </div>
+                    <div class="checkout-row">
+                        <span class="checkout-label">Admission Price</span>
+                        <span class="checkout-value" id="summary-price">₹0</span>
+                    </div>
+                    <button class="book-now-btn" id="summary-confirm-btn">Confirm Reservation</button>
+                </div>
+            </div>
+
+            <div class="control-panel" id="control-panel" style="margin-top: 30px;"></div>
         </div>
     </div>
 
     <script>
         let currentActiveShowtimeId = null;
+        let selectedSeatId = null;
 
         // 1. Initial boot up cycle: Fetch all movies to build layout cards
         async function initApp() {
@@ -562,32 +658,41 @@
                 card.style.backgroundImage = `url('${movie.posterUrl}')`;
 
                 card.onclick = () => {
-                    // Strip old active selections and establish new card outline
+                    // 1. Strip old active selections and establish new card outline
                     document.querySelectorAll('.movie-card').forEach(c => c.classList.remove('active'));
                     card.classList.add('active');
+
+                    // 2. Trigger the dynamic theme shifting pipeline step
                     selectMovie(movie);
+
+                    // 3. Smoothly glide the card into central focus alignment inside its row
+                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+                    // 🌟 INSERT THIS NEW LINE HERE:
+                    // This forces the entire browser window to scroll down slightly so the booking workspace is perfectly visible!
+                    setTimeout(() => {
+                        document.querySelector('.booking-workspace').scrollIntoView({ behavior: 'smooth', block: 'end' });
+                    }, 350); // A tiny 350ms delay lets the card slide finish first before moving the page!
                 };
 
                 container.appendChild(card);
             });
 
-            // Mark the very first item as visual active card baseline
             if (container.firstChild) container.firstChild.classList.add('active');
         }
 
         // 3. Main theme shifting pipeline step when card click event triggers
         async function selectMovie(movie) {
-            // Update the giant immersive top background banner
             document.getElementById('hero-bg').style.backgroundImage = `url('${movie.bannerUrl}')`;
             document.getElementById('hero-title').innerText = movie.title;
             document.getElementById('hero-genre').innerText = `✨ ${movie.genre} | Language: ${movie.language} | 🕒 ${movie.durationMinutes} mins`;
 
-            // Reset workspace view fields
             document.getElementById('seats-layout').innerHTML = '';
             document.getElementById('control-panel').innerHTML = '';
+            document.getElementById('checkout-panel').classList.remove('active'); // Hide checkout card
             currentActiveShowtimeId = null;
+            selectedSeatId = null;
 
-            // Call our new custom filtered backend query method!
             try {
                 const response = await fetch(`/api/showtimes/movie/${movie.id}`);
                 const showtimes = await response.json();
@@ -597,14 +702,15 @@
                     return;
                 }
 
-                // If showtimes exist, grab the first scheduled layout option
                 const activeShow = showtimes[0];
                 currentActiveShowtimeId = activeShow.id;
 
                 document.getElementById('showtime-text').innerText =
                     `⏰ Location: ${activeShow.screenName} | Price: ₹${activeShow.ticketPrice} | Showtime ID: ${activeShow.id}`;
 
-                // Fetch real-time seat allocations for this specific showtime id
+                // Add a hidden data attribute to the wrapper so we can read the price later!
+                document.getElementById('checkout-panel').setAttribute('data-price', activeShow.ticketPrice);
+
                 await loadSeatsForShowtime(activeShow.id);
                 renderResetControl(activeShow.id);
             } catch (err) {
@@ -628,55 +734,73 @@
             const grid = document.getElementById('seats-layout');
             grid.innerHTML = '';
 
-            // Group our seats array dynamically by their prefix row letter
             const rowsMap = {};
             seats.forEach(seat => {
-                // If seatNumber is "A-1", split('-')[0] gives us "A"
                 const rowLetter = seat.seatNumber.includes('-') ? seat.seatNumber.split('-')[0] : 'A';
-                if (!rowsMap[rowLetter]) {
-                    rowsMap[rowLetter] = [];
-                }
+                if (!rowsMap[rowLetter]) rowsMap[rowLetter] = [];
                 rowsMap[rowLetter].push(seat);
             });
 
-            // Loop through each row in our sorted map and build a physical row row
             Object.keys(rowsMap).sort().forEach(rowLetter => {
                 const rowWrapper = document.createElement('div');
                 rowWrapper.className = 'seat-row';
 
-                // Left row identifier label
                 const leftLabel = document.createElement('div');
                 leftLabel.className = 'row-label';
                 leftLabel.innerText = rowLetter;
                 rowWrapper.appendChild(leftLabel);
 
-                // Append the chairs inside this row
                 rowsMap[rowLetter].forEach(seat => {
                     const btn = document.createElement('button');
                     btn.className = 'seat-btn';
+                    btn.id = `seat-node-${seat.id}`;
 
-                    // Display just the number component on the chair face (e.g. "1" instead of "A-1")
                     const seatNumDisplay = seat.seatNumber.includes('-') ? seat.seatNumber.split('-')[1] : seat.seatNumber;
                     btn.innerText = seatNumDisplay;
 
                     if (seat.reserved === true || seat.reserved === "true") {
                         btn.classList.add('occupied');
                         btn.disabled = true;
+                    } else {
+                        // 🌟 SINGLE SEAT SELECTION FRONTEND FLOW:
+                        btn.onclick = () => {
+                            // Strip old temporary highlighting styles from other buttons
+                            document.querySelectorAll('.seat-btn').forEach(b => {
+                                if (!b.classList.contains('occupied')) {
+                                    b.style.background = 'rgba(38, 222, 129, 0.08)';
+                                    b.style.color = '#26de81';
+                                }
+                            });
+
+                            // Highlight this selected seat using your theme colors
+                            btn.style.background = '#a55eea';
+                            btn.style.color = '#ffffff';
+
+                            selectedSeatId = seat.id;
+
+                            // Populate checkout card details and slide it into view
+                            const ticketPrice = document.getElementById('checkout-panel').getAttribute('data-price');
+                            document.getElementById('summary-seat-num').innerText = seat.seatNumber;
+                            document.getElementById('summary-price').innerText = `₹${ticketPrice}`;
+                            document.getElementById('checkout-panel').classList.add('active');
+
+                            // Attach the backend transaction execution trigger to the confirm button
+                            document.getElementById('summary-confirm-btn').onclick = async () => {
+                                if (!selectedSeatId) return;
+                                const postResponse = await fetch(`/api/bookings/book/${selectedSeatId}`, { method: 'POST' });
+                                const resultText = await postResponse.text();
+
+                                showToast(resultText);
+                                document.getElementById('checkout-panel').classList.remove('active');
+                                selectedSeatId = null;
+                                await loadSeatsForShowtime(currentActiveShowtimeId);
+                            };
+                        };
                     }
-
-                    btn.onclick = async () => {
-                        const postResponse = await fetch(`/api/bookings/book/${seat.id}`, { method: 'POST' });
-                        const resultText = await postResponse.text();
-
-                        // 🌟 Replace alert(resultText); with this:
-                        showToast(resultText);
-                        await loadSeatsForShowtime(currentActiveShowtimeId);
-                    };
 
                     rowWrapper.appendChild(btn);
                 });
 
-                // Right side row label for complete spatial balance
                 const rightLabel = document.createElement('div');
                 rightLabel.className = 'row-label';
                 rightLabel.innerText = rowLetter;
