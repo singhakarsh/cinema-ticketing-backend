@@ -65,17 +65,25 @@ public class DataInitializer implements CommandLineRunner {
             Showtime show2 = new Showtime(batman, "IMAX Screen 2", LocalDateTime.of(2026, 6, 10, 21, 00), 350.00);
             showtimeRepository.save(show2);
 
-            // Generate Seats for Showtime 1 (Interstellar)
-            for (int i = 1; i <= 5; i++) {
-                seatRepository.save(new Seat(show1, "A-" + i));
+            // --- Generate Expanded Seat Matrix for Showtime 1 (Interstellar) ---
+            char[] rows = { 'A', 'B', 'C', 'D' };
+            for (char row : rows) {
+                for (int number = 1; number <= 8; number++) {
+                    String seatNumber = row + "-" + number; // Creates "A-1", "A-2" ... "D-8"
+                    seatRepository.save(new Seat(show1, seatNumber));
+                }
             }
 
-            // NEW: Generate Seats for Showtime 2 (The Dark Knight)
-            for (int i = 1; i <= 5; i++) {
-                seatRepository.save(new Seat(show2, "B-" + i));
+            // --- Generate Expanded Seat Matrix for Showtime 2 (The Dark Knight) ---
+            for (char row : rows) {
+                for (int number = 1; number <= 8; number++) {
+                    String seatNumber = row + "-" + number;
+                    seatRepository.save(new Seat(show2, seatNumber));
+                }
             }
 
-            System.out.println("✅ Themed data injection complete with separate showtimes and seat grids!");
+            System.out.println(
+                    "🚀 Multi-row seating matrix initialized! 32 premium luxury seats allocated per showtime.");
         }
     }
 }
