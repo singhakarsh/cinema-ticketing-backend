@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinema Admin Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #06060c;
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .admin-container {
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .admin-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 20px;
+        }
+
+        .admin-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff 0%, #a55eea 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .admin-header p {
+            color: #8e8e9f;
+            font-size: 0.95rem;
+            margin-top: 5px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        .admin-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #a55eea;
+            margin-bottom: 5px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #8e8e9f;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input,
+        .input-group select {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        /* Support color-picker look for native calendar fields */
+        .input-group input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #a55eea;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 15px rgba(165, 94, 234, 0.2);
+        }
+
+        .submit-btn {
+            background: #a55eea;
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 15px rgba(165, 94, 234, 0.3);
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background: #b36ff6;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(165, 94, 234, 0.5);
+        }
+
+        .nav-link {
+            color: #8e8e9f;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #ffffff;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .toast-card {
+            background: linear-gradient(135deg, rgba(30, 30, 50, 0.85) 0%, rgba(15, 15, 30, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 16px 28px;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .toast-card.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="toast-container" id="toast-wrapper"></div>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <a href="/index.html" class="nav-link">← Back to Main Dashboard</a>
+            <h1 style="margin-top: 15px;">Cinema Inventory Management</h1>
+            <p>Add new film releases and allocate live showtimes across your screens.</p>
+        </div>
+
+        <div class="form-grid">
+            <div class="admin-card">
+                <div class="card-title">🎬 Add New Movie</div>
+                <form id="movie-form">
+                    <div class="input-group" style="margin-bottom: 15px;">
+                        <label>Movie Title</label>
+                        <input type="text" id="movie-title" required placeholder="e.g. Inception">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 15px;">
+                        <label>Genre</label>
+                        <input type="text" id="movie-genre" required placeholder="e.g. Sci-Fi / Thriller">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 15px;">
+                        <label>Language</label>
+                        <input type="text" id="movie-lang" required placeholder="e.g. English">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 15px;">
+                        <label>Duration (Minutes)</label>
+                        <input type="number" id="movie-duration" required placeholder="e.g. 148">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 15px;">
+                        <label>Poster URL</label>
+                        <input type="url" id="movie-poster" required placeholder="Vertical thumbnail link">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 20px;">
+                        <label>Banner URL</label>
+                        <input type="url" id="movie-banner" required placeholder="Horizontal background header link">
+                    </div>
+                    <button type="submit" class="submit-btn" style="width: 100%;">Upload Movie Title</button>
+                </form>
+            </div>
+
+            <div class="admin-card">
+                <div class="card-title">⏰ Schedule New Showtime</div>
+                <form id="showtime-form">
+                    <div class="input-group" style="margin-bottom: 15px;">
+                        <label>Target Movie</label>
+                        <select id="showtime-movie-select" required>
+                            <option value="" disabled selected>Loading active titles...</option>
+                        </select>
+                    </div>
+                    <div class="input-group" style="margin-bottom: 15px;">
+                        <label>Auditorium / Screen Name</label>
+                        <input type="text" id="showtime-screen" required
+                            placeholder="e.g. Audi Screen 1 or IMAX Screen 2">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 15px;">
+                        <label>Start Date & Time</label>
+                        <input type="datetime-local" id="showtime-start" required>
+                    </div>
+                    <div class="input-group" style="margin-bottom: 25px;">
+                        <label>Admission Ticket Price (INR)</label>
+                        <input type="number" id="showtime-price" required placeholder="e.g. 300">
+                    </div>
+                    <button type="submit" class="submit-btn" style="width: 100%;">Allocate & Generate Seats</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Toast Notification Engine
+        function showToast(message) {
+            const container = document.getElementById('toast-wrapper');
+            const toast = document.createElement('div');
+            toast.className = 'toast-card';
+            toast.innerText = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 50);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 4000);
+        }
+
+        // 2. Safe Movie Dropdown Loader (Using clean relative paths)
+        async function loadMovieDropdown() {
+            try {
+                console.log("📡 Attempting to fetch movies from backend...");
+                const response = await fetch('/api/movies');
+
+                if (!response.ok) {
+                    throw new Error(`Server returned status: ${response.status}`);
+                }
+
+                const movies = await response.json();
+                console.log("🎬 Movies successfully loaded from DB:", movies);
+
+                const select = document.getElementById('showtime-movie-select');
+                select.innerHTML = '<option value="" disabled selected>Select a movie...</option>';
+
+                if (movies.length === 0) {
+                    select.innerHTML = '<option value="" disabled>🚫 No movies found in Database</option>';
+                    return;
+                }
+
+                movies.forEach(movie => {
+                    const opt = document.createElement('option');
+                    opt.value = movie.id;
+                    opt.innerText = movie.title;
+                    select.appendChild(opt);
+                });
+            } catch (err) {
+                console.error("❌ Dropdown Loader Error:", err);
+                document.getElementById('showtime-movie-select').innerHTML =
+                    '<option value="" disabled>❌ Error loading active titles</option>';
+            }
+        }
+
+        // 3. Handle Movie Form Submission
+        document.getElementById('movie-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const payload = {
+                title: document.getElementById('movie-title').value,
+                genre: document.getElementById('movie-genre').value,
+                language: document.getElementById('movie-lang').value,
+                durationMinutes: parseInt(document.getElementById('movie-duration').value),
+                posterUrl: document.getElementById('movie-poster').value,
+                bannerUrl: document.getElementById('movie-banner').value
+            };
+
+            try {
+                const response = await fetch('/api/admin/movies', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    showToast("🚀 Movie catalog expanded successfully!");
+                    document.getElementById('movie-form').reset();
+                    await loadMovieDropdown();
+                } else {
+                    showToast("❌ Server rejected movie upload layout properties.");
+                }
+            } catch (err) {
+                console.error("Movie Form Error:", err);
+                showToast("❌ Network connectivity error.");
+            }
+        };
+
+        // 4. Handle Showtime Form Submission (Flattened Data Contract)
+        document.getElementById('showtime-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const rawDateTime = document.getElementById('showtime-start').value;
+
+            const payload = {
+                movieId: parseInt(document.getElementById('showtime-movie-select').value),
+                screenName: document.getElementById('showtime-screen').value,
+                startTime: rawDateTime,
+                ticketPrice: parseFloat(document.getElementById('showtime-price').value)
+            };
+
+            try {
+                const response = await fetch('/api/admin/showtimes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const txt = await response.text();
+                showToast(txt);
+                if (response.ok) {
+                    document.getElementById('showtime-form').reset();
+                }
+            } catch (err) {
+                console.error("Showtime Form Error:", err);
+                showToast("❌ Network connectivity error.");
+            }
+        };
+
+        // 5. Initial Boot Trigger
+        document.addEventListener("DOMContentLoaded", () => {
+            loadMovieDropdown();
+        });
+    </script>
+</body>
+
+</html>

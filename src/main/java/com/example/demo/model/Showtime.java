@@ -2,6 +2,7 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonFormat; // Added import for JSON formatting
 
 @Entity
 @Table(name = "showtimes")
@@ -19,11 +20,13 @@ public class Showtime {
     @Column(nullable = false)
     private String screenName; // e.g., "Screen 1 Audi", "IMAX Screen"
 
+    // 🌟 Configured format to handle HTML datetime-local string mapping perfectly
     @Column(nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime startTime;
 
     @Column(nullable = false)
-    private double ticketPrice;
+    private Double ticketPrice;
 
     public Showtime() {
     }

@@ -14,7 +14,7 @@ public class Movie {
     private String title;
 
     private String genre;
-    private int durationMinutes;
+    private Integer durationMinutes;
     private String language;
     private String posterUrl; // For the vertical cards at the bottom
     private String bannerUrl; // For the big immersive background image

@@ -7,7 +7,5 @@ import java.util.List;
 
 @Repository
 public interface SeatRepository extends JpaRepository<Seat, Long> {
-    // Adding 'OrderBySeatNumberAsc' tells Spring to add 'ORDER BY seat_number ASC'
-    // to the SQL query automatically!
     List<Seat> findByShowtimeIdOrderBySeatNumberAsc(Long showtimeId);
 }
