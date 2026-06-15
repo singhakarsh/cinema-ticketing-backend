@@ -56,4 +56,36 @@ public class AdminController {
 
         return ResponseEntity.ok("🚀 Showtime created successfully! 32 seats have been automatically allocated.");
     }
+
+    // 1. Endpoint to UPDATE an existing movie title
+    @PutMapping("/movies/{id}")
+    public ResponseEntity<String> updateMovie(@PathVariable Long id, @RequestBody Movie movieDetails) {
+        Movie existingMovie = cinemaService.getMovieById(id);
+        if (existingMovie == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        existingMovie.setTitle(movieDetails.getTitle());
+        existingMovie.setGenre(movieDetails.getGenre());
+        existingMovie.setLanguage(movieDetails.getLanguage());
+        existingMovie.setDurationMinutes(movieDetails.getDurationMinutes());
+        existingMovie.setPosterUrl(movieDetails.getPosterUrl());
+        existingMovie.setBannerUrl(movieDetails.getBannerUrl());
+
+        cinemaService.createMovie(existingMovie);
+
+        return ResponseEntity.ok("🚀 Movie updates saved successfully!");
+    }
+
+    // 2. Endpoint to DELETE a movie and trigger the cascade chain link
+    @DeleteMapping("/movies/{id}")
+    public ResponseEntity<String> deleteMovie(@PathVariable Long id) {
+        Movie movie = cinemaService.getMovieById(id);
+        if (movie == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        cinemaService.deleteMovieById(id);
+        return ResponseEntity.ok("🗑️ Movie and all its scheduled showtimes/allocated seats successfully removed.");
+    }
 }

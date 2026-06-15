@@ -53,4 +53,10 @@ public class CinemaManagementService {
     public Movie getMovieById(Long id) {
         return movieRepository.findById(id).orElse(null);
     }
+
+    // Add this method inside your CinemaManagementService class block
+    @org.springframework.transaction.annotation.Transactional
+    public void deleteMovieById(Long id) {
+        movieRepository.deleteById(id);
+    }
 }

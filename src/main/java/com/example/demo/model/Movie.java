@@ -1,6 +1,8 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore; // Prevents infinite recursion during serialization
 
 @Entity
 @Table(name = "movies")
@@ -19,13 +21,19 @@ public class Movie {
     private String posterUrl; // For the vertical cards at the bottom
     private String bannerUrl; // For the big immersive background image
 
+    // 🌟 THE BI-DIRECTIONAL CASCADE LINK
+    // This allows cascade deletes and explicitly tells Jackson to skip serializing
+    // nested showtimes back over the network during a Movie update request.
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Showtime> showtimes;
+
     // Standard Boilerplate Constructors
     public Movie() {
     }
 
-    // Update your existing constructor or add this one so we can inject images
-    // easily:
-    public Movie(String title, String genre, int durationMinutes, String language, String posterUrl, String bannerUrl) {
+    public Movie(String title, String genre, Integer durationMinutes, String language, String posterUrl,
+            String bannerUrl) {
         this.title = title;
         this.genre = genre;
         this.durationMinutes = durationMinutes;
@@ -34,7 +42,16 @@ public class Movie {
         this.bannerUrl = bannerUrl;
     }
 
-    // --- Add Getters and Setters for the new fields ---
+    // --- Getters and Setters for the showtimes relationship ---
+    public List<Showtime> getShowtimes() {
+        return showtimes;
+    }
+
+    public void setShowtimes(List<Showtime> showtimes) {
+        this.showtimes = showtimes;
+    }
+
+    // --- Getters and Setters for the movie properties ---
     public String getPosterUrl() {
         return posterUrl;
     }
@@ -51,7 +68,6 @@ public class Movie {
         this.bannerUrl = bannerUrl;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -76,11 +92,11 @@ public class Movie {
         this.genre = genre;
     }
 
-    public int getDurationMinutes() {
+    public Integer getDurationMinutes() {
         return durationMinutes;
     }
 
-    public void setDurationMinutes(int durationMinutes) {
+    public void setDurationMinutes(Integer durationMinutes) {
         this.durationMinutes = durationMinutes;
     }
 
