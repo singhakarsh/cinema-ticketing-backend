@@ -6,12 +6,17 @@ import com.example.demo.model.Showtime;
 import com.example.demo.repository.MovieRepository;
 import com.example.demo.repository.SeatRepository;
 import com.example.demo.repository.ShowtimeRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
+
+    @Autowired
+    private com.example.demo.repository.AdminRepository adminRepository;
 
     private final MovieRepository movieRepository;
     private final ShowtimeRepository showtimeRepository;
@@ -28,6 +33,14 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+
+        // Inside your run() initialization method, add this check:
+        if (adminRepository.count() == 0) {
+            // 🌟 Setting up your initial gateway keys
+            com.example.demo.model.Admin defaultAdmin = new com.example.demo.model.Admin("admin", "cinema123");
+            adminRepository.save(defaultAdmin);
+            System.out.println("🔐 Security System Initialized: Default admin account created (admin/cinema123)");
+        }
 
         if (movieRepository.count() == 0) {
             System.out.println("🎬 Database is empty! Injecting premium themed movie data...");

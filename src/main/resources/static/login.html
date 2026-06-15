@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinema Portal - Admin Authentication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #06060c;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            max-width: 420px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .login-header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #a55eea 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        .login-header p {
+            color: #8e8e9f;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-top: 6px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #8e8e9f;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 14px 16px;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            width: 100%;
+            transition: all 0.2s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #a55eea;
+            box-shadow: 0 0 15px rgba(165, 94, 234, 0.2);
+        }
+
+        .login-btn {
+            background: #a55eea;
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            background: #b36ff6;
+            transform: translateY(-1px);
+        }
+
+        .error-msg {
+            color: #eb3b5a;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            min-height: 20px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-card">
+        <div class="login-header">
+            <h1>Staff Authentication</h1>
+            <p>Enter your credential keys to access theater controls.</p>
+        </div>
+
+        <form id="login-form" style="display: flex; flex-direction: column; gap: 16px;">
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" id="username" required autocomplete="username" placeholder="Enter admin username">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••">
+            </div>
+
+            <div class="error-msg" id="error-banner"></div>
+
+            <button type="submit" class="login-btn">Verify Keys & Log In</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('login-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const errorBanner = document.getElementById('error-banner');
+            errorBanner.style.display = 'none';
+
+            const payload = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    // Cookie session mapping is saved automatically by the browser. 
+                    // Redirect straight into your administrative management catalog dashboard!
+                    window.location.href = '/admin.html';
+                } else {
+                    const errorText = await response.text();
+                    errorBanner.innerText = errorText;
+                    errorBanner.style.display = 'block';
+                }
+            } catch (err) {
+                errorBanner.innerText = "❌ Connection to authentication server refused.";
+                errorBanner.style.display = 'block';
+            }
+        };
+    </script>
+</body>
+
+</html>

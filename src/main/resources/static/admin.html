@@ -246,10 +246,14 @@
     <div class="toast-container" id="toast-wrapper"></div>
 
     <div class="admin-container">
-        <div class="admin-header">
-            <a href="/index.html" class="nav-link">← Back to Main Dashboard</a>
-            <h1 style="margin-top: 15px;">Cinema Inventory Management</h1>
-            <p>Add, edit, or delete film releases and schedule active theatre showtimes.</p>
+        <div class="admin-header" style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+                <a href="/index.html" class="nav-link">← Back to Main Dashboard</a>
+                <h1 style="margin-top: 15px;">Cinema Inventory Management</h1>
+                <p>Add, edit, or delete film releases and schedule active theatre showtimes.</p>
+            </div>
+            <button id="logout-trigger-btn" class="edit-btn"
+                style="background: #be2edd; padding: 10px 20px; font-weight: 700;">Secure Log Out</button>
         </div>
 
         <div class="form-grid">
@@ -502,6 +506,14 @@
         };
 
         document.addEventListener("DOMContentLoaded", refreshAdminDataDashboard);
+
+        // Append this action inside your script block to enable clear-out requests
+        document.getElementById('logout-trigger-btn').onclick = async () => {
+            const response = await fetch('/api/auth/logout', { method: 'POST' });
+            if (response.ok) {
+                window.location.href = '/login.html';
+            }
+        };
     </script>
 </body>
 
