@@ -694,7 +694,8 @@
             selectedSeatId = null;
 
             try {
-                const response = await fetch(`/api/showtimes/movie/${movie.id}`);
+                // 🌟 FIXED: Added /public to match your working ShowtimeController.java mapping!
+                const response = await fetch(`/api/public/showtimes/movie/${movie.id}`);
                 const showtimes = await response.json();
 
                 if (showtimes.length === 0) {

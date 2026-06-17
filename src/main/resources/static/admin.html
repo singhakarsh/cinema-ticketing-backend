@@ -4,346 +4,318 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinema Admin Portal</title>
+    <title>CinemaCircle - Administration Console</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+        /* Modern Base & Clean Scrollbar Customizations */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         body {
-            background-color: #06060c;
+            background-color: #08080e;
             color: #ffffff;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            display: flex;
             min-height: 100vh;
-            padding: 40px 20px;
-            display: flex;
-            justify-content: center;
+            overflow-x: hidden;
         }
 
-        .admin-container {
-            max-width: 1100px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 40px;
-        }
-
-        .admin-header {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            padding-bottom: 20px;
-        }
-
-        .admin-header h1 {
-            font-size: 2rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #fff 0%, #a55eea 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .admin-header p {
+        /* Interactive Styling Components */
+        .nav-tab-btn {
+            background: transparent;
+            border: 1px solid transparent;
             color: #8e8e9f;
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
             font-size: 0.95rem;
-            margin-top: 5px;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-            gap: 30px;
-        }
-
-        .admin-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
             display: flex;
-            flex-direction: column;
-            gap: 20px;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
         }
 
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #a55eea;
+        .nav-tab-btn.active {
+            background: rgba(165, 94, 234, 0.1) !important;
+            border-color: rgba(165, 94, 234, 0.2) !important;
+            color: #ffffff !important;
         }
 
-        .input-group {
+        .nav-tab-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.03);
+            color: #ffffff;
+        }
+
+        /* Form Controls Customizations */
+        .form-group {
             display: flex;
             flex-direction: column;
             gap: 8px;
+            margin-bottom: 18px;
         }
 
-        .input-group label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #8e8e9f;
-            text-transform: uppercase;
-        }
-
-        .input-group input,
-        .input-group select {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 12px 16px;
-            border-radius: 8px;
-            color: #ffffff;
-            font-size: 0.95rem;
-            width: 100%;
-        }
-
-        .input-group input:focus,
-        .input-group select:focus {
-            outline: none;
-            border-color: #a55eea;
-            box-shadow: 0 0 15px rgba(165, 94, 234, 0.2);
-        }
-
-        .input-group input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-            filter: invert(1);
-            cursor: pointer;
-        }
-
-        .submit-btn {
-            background: #a55eea;
-            color: #ffffff;
-            border: none;
-            padding: 14px;
-            border-radius: 8px;
-            font-size: 1rem;
+        .form-group label {
+            font-size: 0.75rem;
             font-weight: 700;
-            cursor: pointer;
-            transition: all 0.25s ease;
-        }
-
-        .submit-btn:hover {
-            background: #b36ff6;
-            transform: translateY(-2px);
-        }
-
-        .nav-link {
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             color: #8e8e9f;
-            text-decoration: none;
+        }
+
+        .form-group input,
+        .form-group select {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 12px 14px;
+            border-radius: 10px;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
             font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+            outline: none;
+            transition: border-color 0.2s;
         }
 
-        /* Interactive Data Catalog Table View Elements */
-        .catalog-section {
-            margin-top: 10px;
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #a55eea;
+            background: rgba(255, 255, 255, 0.04);
         }
 
-        .catalog-table {
+        .form-group select option {
+            background-color: #11111e;
+            /* Explicitly forces a solid dark popover color */
+            color: #ffffff;
+            /* Explicitly forces readable white text */
+            padding: 10px;
+        }
+
+        /* Premium Custom Tables Grid Layout */
+        .premium-table {
             width: 100%;
             border-collapse: collapse;
-            background: rgba(255, 255, 255, 0.01);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            overflow: hidden;
-            margin-top: 15px;
-        }
-
-        .catalog-table th,
-        .catalog-table td {
-            padding: 16px;
             text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .catalog-table th {
-            background: rgba(165, 94, 234, 0.08);
-            color: #a55eea;
+        .premium-table th {
+            padding: 14px 16px;
+            font-size: 0.75rem;
             font-weight: 700;
-            font-size: 0.85rem;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #8e8e9f;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
 
-        .catalog-table td {
-            font-size: 0.95rem;
-            color: #e2e2e2;
+        .premium-table td {
+            padding: 16px;
+            font-size: 0.9rem;
+            color: #d1d1d6;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
         }
 
-        /* Production Utility Buttons */
+        /* Dashboard Action Interactive Buttons */
         .action-btns {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
         .edit-btn {
-            background: #fa8231;
-            color: white;
-            border: none;
-            padding: 6px 14px;
+            background: rgba(250, 130, 49, 0.1);
+            border: 1px solid rgba(250, 130, 49, 0.2);
+            color: #fa8231;
+            padding: 6px 12px;
             border-radius: 6px;
             cursor: pointer;
-            font-weight: 700;
-            font-size: 0.85rem;
-            transition: background 0.2s;
-        }
-
-        .delete-btn {
-            background: #eb3b5a;
-            color: white;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 0.85rem;
-            transition: background 0.2s;
+            font-weight: 600;
+            font-size: 0.8rem;
         }
 
         .edit-btn:hover {
-            background: #f7b731;
+            background: rgba(250, 130, 49, 0.2);
+        }
+
+        .delete-btn {
+            background: rgba(235, 59, 90, 0.1);
+            border: 1px solid rgba(235, 59, 90, 0.2);
+            color: #eb3b5a;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8rem;
         }
 
         .delete-btn:hover {
-            background: #ff5252;
+            background: rgba(235, 59, 90, 0.2);
         }
 
-        .toast-container {
+        /* Floating Notification Toast System */
+        #toast-wrapper {
             position: fixed;
-            top: 30px;
+            bottom: 30px;
             right: 30px;
             z-index: 9999;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .toast-card {
-            background: linear-gradient(135deg, rgba(30, 30, 50, 0.85) 0%, rgba(15, 15, 30, 0.95) 100%);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 16px 28px;
-            border-radius: 12px;
+            background: #11111e;
+            border-left: 4px solid #a55eea;
             color: #ffffff;
-            font-size: 0.9rem;
+            padding: 16px 24px;
+            border-radius: 8px;
             font-weight: 600;
+            font-size: 0.9rem;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             transform: translateX(120%);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
-            opacity: 0;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .toast-card.show {
             transform: translateX(0);
-            opacity: 1;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="toast-container" id="toast-wrapper"></div>
+    <!-- 1. LEFT SIDEBAR CONTROL PANEL NAVIGATION COLUMN -->
+    <div class="sidebar-column"
+        style="width: 280px; background: rgba(255, 255, 255, 0.01); border-right: 1px solid rgba(255, 255, 255, 0.04); display: flex; flex-direction: column; padding: 40px 24px; box-sizing: border-box; justify-content: space-between; position: fixed; height: 100vh; z-index: 100;">
+        <div style="display: flex; flex-direction: column; gap: 45px;">
+            <div class="sidebar-logo"
+                style="font-size: 1.4rem; font-weight: 800; background: linear-gradient(135deg, #fff 0%, #a55eea 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 12px; letter-spacing: -0.5px;">
+                🎟️ CircleCinema
+            </div>
 
-    <div class="admin-container">
-        <div class="admin-header" style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <div class="nav-links-stack" style="display: flex; flex-direction: column; gap: 10px;">
+                <button id="tab-btn-catalog" class="nav-tab-btn active" onclick="switchControlDashboardTab('catalog')">
+                    <span style="font-size: 1.1rem;">🎞️</span> Movie Catalog
+                </button>
+                <button id="tab-btn-scheduling" class="nav-tab-btn" onclick="switchControlDashboardTab('scheduling')">
+                    <span style="font-size: 1.1rem;">⏰</span> Show Schedules
+                </button>
+            </div>
+        </div>
+
+        <button id="logout-trigger-btn"
+            style="background: rgba(235, 59, 90, 0.06); border: 1px solid rgba(235, 59, 90, 0.15); color: #eb3b5a; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s;">
+            🔒 Secure Log Out
+        </button>
+    </div>
+
+    <!-- 2. MAIN HUB WORKSPACE VIEWPORT -->
+    <div class="main-dashboard-viewport"
+        style="margin-left: 280px; flex-grow: 1; padding: 45px; box-sizing: border-box; display: flex; flex-direction: column; gap: 35px;">
+
+        <!-- HEADER CONTROL HUD BAR -->
+        <div class="dashboard-top-nav-bar" style="display: flex; justify-content: space-between; align-items: center;">
             <div>
-                <a href="/index.html" class="nav-link">← Back to Main Dashboard</a>
-                <h1 style="margin-top: 15px;">Cinema Inventory Management</h1>
-                <p>Add, edit, or delete film releases and schedule active theatre showtimes.</p>
-            </div>
-            <button id="logout-trigger-btn" class="edit-btn"
-                style="background: #be2edd; padding: 10px 20px; font-weight: 700;">Secure Log Out</button>
-        </div>
-
-        <div class="form-grid">
-            <div class="admin-card">
-                <div class="card-title" id="form-mode-title">🎬 Add New Movie</div>
-                <form id="movie-form">
-                    <input type="hidden" id="edit-movie-id">
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label>Movie Title</label>
-                        <input type="text" id="movie-title" required placeholder="e.g. Inception">
-                    </div>
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label>Genre</label>
-                        <input type="text" id="movie-genre" required placeholder="e.g. Sci-Fi / Action">
-                    </div>
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label>Language</label>
-                        <input type="text" id="movie-lang" required placeholder="e.g. English">
-                    </div>
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label>Duration (Minutes)</label>
-                        <input type="number" id="movie-duration" required placeholder="e.g. 148">
-                    </div>
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label>Poster URL</label>
-                        <input type="url" id="movie-poster" required placeholder="Vertical card image link">
-                    </div>
-                    <div class="input-group" style="margin-bottom: 15px;">
-                        <label>Banner URL</label>
-                        <input type="url" id="movie-banner" required placeholder="Horizontal background link">
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button type="submit" id="movie-submit-btn" class="submit-btn" style="flex: 2;">Upload Movie
-                            Title</button>
-                        <button type="button" id="cancel-edit-btn" class="submit-btn"
-                            style="background: #3e3e4f; display: none; flex: 1;">Cancel</button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="admin-card">
-                <div class="card-title">⏰ Schedule New Showtime</div>
-                <form id="showtime-form">
-                    <div class="input-group" style="margin-bottom: 15px;">
-                        <label>Target Movie</label>
-                        <select id="showtime-movie-select" required>
-                            <option value="" disabled selected>Loading active titles...</option>
-                        </select>
-                    </div>
-                    <div class="input-group" style="margin-bottom: 15px;">
-                        <label>Auditorium / Screen Name</label>
-                        <input type="text" id="showtime-screen" required
-                            placeholder="e.g. Audi Screen 1 or IMAX Screen">
-                    </div>
-                    <div class="input-group" style="margin-bottom: 15px;">
-                        <label>Start Date & Time</label>
-                        <input type="datetime-local" id="showtime-start" required>
-                    </div>
-                    <div class="input-group" style="margin-bottom: 25px;">
-                        <label>Admission Ticket Price (INR)</label>
-                        <input type="number" id="showtime-price" required placeholder="e.g. 300">
-                    </div>
-                    <button type="submit" class="submit-btn" style="width: 100%;">Allocate & Generate Seats</button>
-                </form>
+                <a href="/index.html"
+                    style="color: #8e8e9f; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: color 0.2s;"
+                    onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#8e8e9f'">← BACK TO PUBLIC
+                    SITE</a>
+                <h1 style="margin: 6px 0 0 0; font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px;">Cinema
+                    Inventory Management</h1>
             </div>
         </div>
 
-        <div class="catalog-section">
-            <h2 class="card-title" style="color: #ffffff; font-size: 1.3rem; margin-bottom: 5px;">🎞️ Live Movie Catalog
-            </h2>
-            <table class="catalog-table">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Genre</th>
-                        <th>Language</th>
-                        <th>Duration</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="catalog-table-body">
-                    <tr>
-                        <td colspan="5" style="text-align: center; color: #8e8e9f;">Synchronizing catalog indices...
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- 📊 REAL-TIME CORE METRICS HUD BLOCK -->
+        <div class="analytics-row-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+            <div
+                style="background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 22px 24px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div
+                        style="font-size: 0.72rem; font-weight: 700; color: #8e8e9f; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Active Releases</div>
+                    <div id="metric-movies" style="font-size: 1.8rem; font-weight: 800; margin-top: 4px;">0</div>
+                </div>
+                <div style="font-size: 1.6rem; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 12px;">
+                    🎞️</div>
+            </div>
+            <div
+                style="background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 22px 24px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div
+                        style="font-size: 0.72rem; font-weight: 700; color: #8e8e9f; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Total Screenings</div>
+                    <div id="metric-showtimes" style="font-size: 1.8rem; font-weight: 800; margin-top: 4px;">0</div>
+                </div>
+                <div style="font-size: 1.6rem; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 12px;">
+                    ⏰</div>
+            </div>
+            <div
+                style="background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 22px 24px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div
+                        style="font-size: 0.72rem; font-weight: 700; color: #8e8e9f; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Gross Revenue</div>
+                    <div id="metric-revenue"
+                        style="font-size: 1.8rem; font-weight: 800; color: #2ecc71; margin-top: 4px;">₹0</div>
+                </div>
+                <div
+                    style="font-size: 1.6rem; background: rgba(46, 204, 113, 0.04); padding: 10px; border-radius: 12px;">
+                    💰</div>
+            </div>
+            <div
+                style="background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 22px 24px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div
+                        style="font-size: 0.72rem; font-weight: 700; color: #8e8e9f; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Occupancy Rate</div>
+                    <div id="metric-occupancy"
+                        style="font-size: 1.8rem; font-weight: 800; color: #a55eea; margin-top: 4px;">0.0%</div>
+                </div>
+                <div
+                    style="font-size: 1.6rem; background: rgba(165, 94, 234, 0.04); padding: 10px; border-radius: 12px;">
+                    📊</div>
+            </div>
+        </div>
+
+        <!-- 🔄 MAIN ACTIVE WORKSPACE INTERACTIVE GRID LAYER -->
+        <div class="workspace-split-content" style="display: flex; gap: 35px; align-items: flex-start;">
+
+            <!-- CURRENT CONTEXT DATA WORKSPACE DATA VISUALIZER -->
+            <div id="dynamic-table-panel-box"
+                style="flex-grow: 1; background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 30px; overflow-x: auto;">
+                <!-- Tables render dynamically right here -->
+            </div>
+
+            <!-- ADMINISTRATIVE OBJECT INPUT SUBMISSION STACK -->
+            <div id="dynamic-form-panel-box"
+                style="width: 400px; background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 30px; position: sticky; top: 40px; box-sizing: border-box;">
+                <!-- Content context switch controls forms here -->
+            </div>
+
         </div>
     </div>
 
+    <!-- Floating System Alert Container -->
+    <div id="toast-wrapper"></div>
+
+    <!-- 🌟 CORE MASTER RUNTIME ENGINE SCRIPT -->
     <script>
         let moviesCacheMemoryPool = [];
 
@@ -360,85 +332,167 @@
             }, 4000);
         }
 
-        // Pulls movies from backend database and draws BOTH the selection elements and table rows simultaneously
+        // 📊 Real-time Admin Business Metrics Fetcher
+        async function loadDashboardMetricsData() {
+            try {
+                console.log("📡 Fetching live dashboard metrics from backend...");
+                const response = await fetch('/api/admin/analytics');
+
+                if (!response.ok) {
+                    console.error(`❌ Server communication error: Status ${response.status}`);
+                    return;
+                }
+
+                const metrics = await response.json();
+
+                const moviesElem = document.getElementById('metric-movies');
+                const showtimesElem = document.getElementById('metric-showtimes');
+                const revenueElem = document.getElementById('metric-revenue');
+                const occupancyElem = document.getElementById('metric-occupancy');
+
+                if (moviesElem) moviesElem.innerText = metrics.totalMovies !== undefined ? metrics.totalMovies : 0;
+                if (showtimesElem) showtimesElem.innerText = metrics.totalShowtimes !== undefined ? metrics.totalShowtimes : 0;
+                if (revenueElem) revenueElem.innerText = "₹" + (metrics.totalRevenue !== undefined ? metrics.totalRevenue.toLocaleString('en-IN') : "0");
+                if (occupancyElem) occupancyElem.innerText = (metrics.occupancyRate !== undefined ? metrics.occupancyRate.toFixed(1) : "0.0") + "%";
+
+            } catch (err) {
+                console.error("❌ Analytics Fetch Engine Exception:", err);
+            }
+        }
+
+        // Pulls movies from backend database and draws table rows dynamically
         async function refreshAdminDataDashboard() {
             try {
                 const response = await fetch('/api/movies');
                 moviesCacheMemoryPool = await response.json();
 
-                const select = document.getElementById('showtime-movie-select');
                 const tbody = document.getElementById('catalog-table-body');
+                const select = document.getElementById('showtime-movie-select');
 
-                select.innerHTML = '<option value="" disabled selected>Select a movie...</option>';
-                tbody.innerHTML = '';
+                // If dropdown element is current active context in form block, initialize it cleanly
+                if (select) {
+                    select.innerHTML = '<option value="" disabled selected>Select a movie...</option>';
+                }
+                if (tbody) {
+                    tbody.innerHTML = '';
+                }
 
                 if (moviesCacheMemoryPool.length === 0) {
-                    select.innerHTML = '<option value="" disabled>No active movies found in database</option>';
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #8e8e9f;">🚫 No active movie records in storage. Create one above!</td></tr>';
+                    if (select) select.innerHTML = '<option value="" disabled>No active movies found</option>';
+                    if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #8e8e9f; padding:30px;">🚫 No active movie records found. Create one!</td></tr>';
                     return;
                 }
 
                 moviesCacheMemoryPool.forEach(movie => {
-                    // 1. Populate Dropdown Options mapping values
-                    const opt = document.createElement('option');
-                    opt.value = movie.id;
-                    opt.innerText = movie.title;
-                    select.appendChild(opt);
+                    if (select) {
+                        const opt = document.createElement('option');
+                        opt.value = movie.id;
+                        opt.innerText = movie.title;
+                        select.appendChild(opt);
+                    }
 
-                    // 2. Generate Interactive Table Rows dynamically
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td style="font-weight: 700; color: #ffffff;">${movie.title}</td>
-                        <td>${movie.genre}</td>
-                        <td>${movie.language}</td>
-                        <td>${movie.durationMinutes} Mins</td>
-                        <td>
-                            <div class="action-btns">
-                                <button class="edit-btn" onclick="activateFormEditMode(${movie.id})">Edit</button>
-                                <button class="delete-btn" onclick="executeMovieDeletion(${movie.id})">Delete</button>
-                            </div>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
+                    if (tbody) {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td style="font-weight: 700; color: #ffffff;">${movie.title}</td>
+                            <td>${movie.genre}</td>
+                            <td>${movie.language}</td>
+                            <td>${movie.durationMinutes} Mins</td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="edit-btn" onclick="activateFormEditMode(${movie.id})">Edit</button>
+                                    <button class="delete-btn" onclick="executeMovieDeletion(${movie.id})">Delete</button>
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    }
                 });
             } catch (err) {
                 console.error("Dashboard engine synchronization breakdown error:", err);
             }
         }
 
-        // Triggers Edit Mode and fills form layout data entries completely
-        function activateFormEditMode(movieId) {
-            const targetMovie = moviesCacheMemoryPool.find(m => m.id === movieId);
-            if (!targetMovie) return;
+        // 🔄 TAB CONTROLLER VIEW SWITCHER PLATFORM
+        function switchControlDashboardTab(tabTargetName) {
+            document.querySelectorAll('.nav-tab-btn').forEach(btn => btn.classList.remove('active'));
 
-            document.getElementById('edit-movie-id').value = targetMovie.id;
-            document.getElementById('movie-title').value = targetMovie.title;
-            document.getElementById('movie-genre').value = targetMovie.genre;
-            document.getElementById('movie-lang').value = targetMovie.language;
-            document.getElementById('movie-duration').value = targetMovie.durationMinutes;
-            document.getElementById('movie-poster').value = targetMovie.posterUrl;
-            document.getElementById('movie-banner').value = targetMovie.bannerUrl;
+            const currentSelectedTabButton = document.getElementById(`tab-btn-${tabTargetName}`);
+            if (currentSelectedTabButton) currentSelectedTabButton.classList.add('active');
 
-            document.getElementById('form-mode-title').innerText = "✍️ Edit Movie Details";
-            document.getElementById('movie-submit-btn').innerText = "Save Changes";
-            document.getElementById('movie-submit-btn').style.background = "#fa8231";
-            document.getElementById('cancel-edit-btn').style.display = "block";
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            const tablePanelBox = document.getElementById('dynamic-table-panel-box');
+            const formPanelBox = document.getElementById('dynamic-form-panel-box');
+
+            if (tabTargetName === 'catalog') {
+                tablePanelBox.innerHTML = `
+                    <h2 style="margin: 0 0 24px 0; font-size: 1.25rem; font-weight:800; display:flex; align-items:center; gap:8px;">🎞️ Live Movie Catalog</h2>
+                    <table class="premium-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Genre</th>
+                                <th>Language</th>
+                                <th>Duration</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="catalog-table-body"></tbody>
+                    </table>
+                `;
+                formPanelBox.innerHTML = `
+                    <h2 id="form-mode-title" style="margin: 0 0 24px 0; font-size: 1.25rem; font-weight:800;">🎬 Add New Movie</h2>
+                    <form id="movie-form">
+                        <input type="hidden" id="edit-movie-id" value="">
+                        <div class="form-group"><label>Movie Title</label><input type="text" id="movie-title" placeholder="e.g. Inception" required></div>
+                        <div class="form-group"><label>Genre</label><input type="text" id="movie-genre" placeholder="e.g. Sci-Fi / Action" required></div>
+                        <div class="form-group"><label>Language</label><input type="text" id="movie-lang" placeholder="e.g. English" required></div>
+                        <div class="form-group"><label>Duration (Minutes)</label><input type="number" id="movie-duration" placeholder="e.g. 148" required></div>
+                        <div class="form-group"><label>Poster URL</label><input type="text" id="movie-poster" placeholder="Vertical image link"></div>
+                        <div class="form-group"><label>Banner URL</label><input type="text" id="movie-banner" placeholder="Horizontal background link"></div>
+                        <button id="movie-submit-btn" type="submit" style="width:100%; padding:14px; background:#a55eea; border:none; border-radius:10px; color:#fff; font-weight:700; font-size:0.95rem; cursor:pointer; margin-bottom:10px; transition:opacity 0.2s;">Upload Movie Title</button>
+                        <button id="cancel-edit-btn" type="button" onclick="cancelAndClearFormState()" style="width:100%; padding:12px; background:transparent; border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:#8e8e9f; font-weight:600; font-size:0.9rem; cursor:pointer; display:none;">Cancel Selection</button>
+                    </form>
+                `;
+
+                // Re-bind submission listener block immediately dynamically
+                document.getElementById('movie-form').onsubmit = executeMovieFormSubmitAction;
+                refreshAdminDataDashboard();
+            }
+            else if (tabTargetName === 'scheduling') {
+                tablePanelBox.innerHTML = `
+                    <h2 style="margin: 0 0 24px 0; font-size: 1.25rem; font-weight:800; display:flex; align-items:center; gap:8px;">⏰ Active Screening Schedules</h2>
+                    <div id="timeline-stack" style="display: flex; flex-direction: column; gap: 16px; width: 100%;">
+                        <!-- Dynamic timeline cards drop directly here -->
+                    </div>
+                `;
+
+                formPanelBox.innerHTML = `
+                    <h2 style="margin: 0 0 24px 0; font-size: 1.25rem; font-weight:800;">⏰ Schedule New Showtime</h2>
+                    <form id="showtime-form">
+                        <div class="form-group">
+                            <label>Target Movie</label>
+                            <select id="showtime-movie-select" required>
+                                <option value="" disabled selected>Select a movie...</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Auditorium / Screen Name</label><input type="text" id="showtime-screen" placeholder="e.g. Audi Screen 1" required></div>
+                        <div class="form-group"><label>Start Date & Time</label><input type="datetime-local" id="showtime-start" required></div>
+                        <div class="form-group"><label>Admission Ticket Price (INR)</label><input type="number" id="showtime-price" placeholder="e.g. 300" required></div>
+                        <button type="submit" style="width:100%; padding:14px; background:#a55eea; border:none; border-radius:10px; color:#fff; font-weight:700; font-size:0.95rem; cursor:pointer;">Allocate & Generate Seats</button>
+                    </form>
+                `;
+
+                // Re-bind submission events securely
+                document.getElementById('showtime-form').onsubmit = executeShowtimeFormSubmitAction;
+
+                // 🌟 Crucial execution order: Pull data from backend AFTER elements exist in DOM
+                refreshAdminDataDashboard();
+                loadTimelineSchedulesData();
+            }
         }
 
-        function cancelAndClearFormState() {
-            document.getElementById('movie-form').reset();
-            document.getElementById('edit-movie-id').value = '';
-            document.getElementById('form-mode-title').innerText = "🎬 Add New Movie";
-            document.getElementById('movie-submit-btn').innerText = "Upload Movie Title";
-            document.getElementById('movie-submit-btn').style.background = "#a55eea";
-            document.getElementById('cancel-edit-btn').style.display = "none";
-        }
-
-        document.getElementById('cancel-edit-btn').onclick = cancelAndClearFormState;
-
-        // Unified Movie Submission Engine: Seamlessly decides between POST and PUT requests
-        document.getElementById('movie-form').onsubmit = async (e) => {
+        // Unified Movie Submission Engine Action Method
+        async function executeMovieFormSubmitAction(e) {
             e.preventDefault();
             const activeEditId = document.getElementById('edit-movie-id').value;
 
@@ -464,28 +518,14 @@
                 showToast(activeEditId ? "🚀 Movie record properties updated successfully!" : "🚀 Movie catalog expanded successfully!");
                 cancelAndClearFormState();
                 await refreshAdminDataDashboard();
+                await loadDashboardMetricsData();
             } else {
                 showToast("❌ Server processing error during object serialization mapping.");
-            }
-        };
-
-        // Complete Cascading Eraser Execution Method
-        async function executeMovieDeletion(movieId) {
-            const warningPrompt = confirm("⚠️ WARNING: Deleting this movie will instantly destroy all scheduled showtimes and reserved seating matrix structures. Continue?");
-            if (!warningPrompt) return;
-
-            const response = await fetch(`/api/admin/movies/${movieId}`, { method: 'DELETE' });
-
-            if (response.ok) {
-                showToast("🗑️ Movie wiped from infrastructure systems successfully.");
-                await refreshAdminDataDashboard();
-            } else {
-                showToast("❌ Processing exception clearing storage records.");
             }
         }
 
         // Showtime Submission Allocation Flow Logic
-        document.getElementById('showtime-form').onsubmit = async (e) => {
+        async function executeShowtimeFormSubmitAction(e) {
             e.preventDefault();
             const payload = {
                 movieId: parseInt(document.getElementById('showtime-movie-select').value),
@@ -502,18 +542,150 @@
 
             const txt = await response.text();
             showToast(txt);
-            if (response.ok) { document.getElementById('showtime-form').reset(); }
-        };
 
-        document.addEventListener("DOMContentLoaded", refreshAdminDataDashboard);
+            if (response.ok) {
+                document.getElementById('showtime-form').reset();
+                await loadDashboardMetricsData();
+                await loadTimelineSchedulesData();
+            }
+        }
 
-        // Append this action inside your script block to enable clear-out requests
+        // Complete Cascading Eraser Execution Method
+        async function executeMovieDeletion(movieId) {
+            const warningPrompt = confirm("⚠️ WARNING: Deleting this movie will instantly destroy all scheduled showtimes and reserved seating structures. Continue?");
+            if (!warningPrompt) return;
+
+            const response = await fetch(`/api/admin/movies/${movieId}`, { method: 'DELETE' });
+
+            if (response.ok) {
+                showToast("🗑️ Movie wiped from infrastructure systems successfully.");
+                await refreshAdminDataDashboard();
+                await loadDashboardMetricsData();
+            } else {
+                showToast("❌ Processing exception clearing storage records.");
+            }
+        }
+
+        // Triggers Edit Mode and fills form layout data entries completely
+        function activateFormEditMode(movieId) {
+            const targetMovie = moviesCacheMemoryPool.find(m => m.id === movieId);
+            if (!targetMovie) return;
+
+            document.getElementById('edit-movie-id').value = targetMovie.id;
+            document.getElementById('movie-title').value = targetMovie.title;
+            document.getElementById('movie-genre').value = targetMovie.genre;
+            document.getElementById('movie-lang').value = targetMovie.language;
+            document.getElementById('movie-duration').value = targetMovie.durationMinutes;
+            document.getElementById('movie-poster').value = targetMovie.posterUrl;
+            document.getElementById('movie-banner').value = targetMovie.bannerUrl;
+
+            document.getElementById('form-mode-title').innerText = "✍️ Edit Movie Details";
+            document.getElementById('movie-submit-btn').innerText = "Save Changes";
+            document.getElementById('movie-submit-btn').style.background = "#fa8231";
+            document.getElementById('cancel-edit-btn').style.display = "block";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelAndClearFormState() {
+            const form = document.getElementById('movie-form');
+            if (form) form.reset();
+            const editId = document.getElementById('edit-movie-id');
+            if (editId) editId.value = '';
+
+            const title = document.getElementById('form-mode-title');
+            const btn = document.getElementById('movie-submit-btn');
+            const cancelBtn = document.getElementById('cancel-edit-btn');
+
+            if (title) title.innerText = "🎬 Add New Movie";
+            if (btn) { btn.innerText = "Upload Movie Title"; btn.style.background = "#a55eea"; }
+            if (cancelBtn) cancelBtn.style.display = "none";
+        }
+
+        // Master App Bootstrap Orchestrator
+        document.addEventListener("DOMContentLoaded", async () => {
+            console.log("🚀 Initializing Premium Sidebar Administration Shell...");
+
+            // Open the default catalog view split page context on boot
+            switchControlDashboardTab('catalog');
+
+            // Fill business data numbers globally 
+            await loadDashboardMetricsData();
+        });
+
+        // Handle logout request routing
         document.getElementById('logout-trigger-btn').onclick = async () => {
             const response = await fetch('/api/auth/logout', { method: 'POST' });
             if (response.ok) {
                 window.location.href = '/login.html';
             }
         };
+
+        // 🌟 NEW: Live Chronological Timeline Render Engine
+        async function loadTimelineSchedulesData() {
+            const timelineStack = document.getElementById('timeline-stack');
+            if (!timelineStack) {
+                console.error("❌ UI Design Error: Could not find element with id 'timeline-stack' on the page.");
+                return;
+            }
+
+            try {
+                console.log("📡 Contacting backend for active showtimes list...");
+                const response = await fetch('/api/public/showtimes');
+
+                if (!response.ok) {
+                    timelineStack.innerHTML = `<div style="padding:20px; text-align:center; color:#eb3b5a; font-weight:600;">⚠️ Backend Error: Server returned status ${response.status}</div>`;
+                    return;
+                }
+
+                const showtimes = await response.json();
+                console.log("⏰ Showtimes payload received:", showtimes);
+                timelineStack.innerHTML = '';
+
+                if (showtimes.length === 0) {
+                    timelineStack.innerHTML = `<div style="padding:40px; text-align:center; color:#8e8e9f; font-size:0.95rem;">📅 No showtimes scheduled yet. Use the form on the right to add some!</div>`;
+                    return;
+                }
+
+                showtimes.forEach(show => {
+                    const dateObj = new Date(show.startTime);
+                    const formattedTime = dateObj.toLocaleDateString('en-IN', {
+                        day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+                    });
+
+                    const card = document.createElement('div');
+                    card.style.background = 'rgba(255, 255, 255, 0.01)';
+                    card.style.border = '1px solid rgba(255, 255, 255, 0.03)';
+                    card.style.padding = '20px';
+                    card.style.borderRadius = '14px';
+                    card.style.display = 'flex';
+                    card.style.justifyContent = 'space-between';
+                    card.style.alignItems = 'center';
+                    card.style.marginBottom = '12px';
+
+                    card.innerHTML = `
+                <div style="display: flex; gap: 16px; align-items: center;">
+                    <div style="font-size: 1.5rem; background: rgba(165, 94, 234, 0.04); padding: 10px; border-radius: 10px; color: #a55eea;">🎬</div>
+                    <div style="text-align: left;">
+                        <div style="font-weight: 700; color: #ffffff; font-size: 1rem;">${show.movie ? show.movie.title : 'Unknown Film'}</div>
+                        <div style="font-size: 0.8rem; color: #8e8e9f; margin-top: 4px; display: flex; gap: 12px;">
+                            <span>🏛️ ${show.screenName || 'Screen'}</span>
+                            <span>🎟️ ₹${show.ticketPrice || '0'}</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 0.85rem; font-weight: 700; color: #a55eea;">${formattedTime}</div>
+                    <div style="font-size: 0.7rem; color: #2ecc71; margin-top: 4px; font-weight:600;">⚡ Matrix Active (32 Seats)</div>
+                </div>
+            `;
+                    timelineStack.appendChild(card);
+                });
+
+            } catch (err) {
+                console.error("❌ Timeline UI Loader Encountered an Exception:", err);
+                timelineStack.innerHTML = `<div style="padding:20px; text-align:center; color:#eb3b5a; font-weight:600;">❌ Network Error: Failed to communicate with timeline API</div>`;
+            }
+        }
     </script>
 </body>
 

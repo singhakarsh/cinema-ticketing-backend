@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Movie;
 import com.example.demo.model.Showtime;
+import com.example.demo.model.AnalyticsSummaryDTO;
 import com.example.demo.service.CinemaManagementService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,7 +58,7 @@ public class AdminController {
         return ResponseEntity.ok("🚀 Showtime created successfully! 32 seats have been automatically allocated.");
     }
 
-    // 1. Endpoint to UPDATE an existing movie title
+    // 4. Endpoint to UPDATE an existing movie title
     @PutMapping("/movies/{id}")
     public ResponseEntity<String> updateMovie(@PathVariable Long id, @RequestBody Movie movieDetails) {
         Movie existingMovie = cinemaService.getMovieById(id);
@@ -77,7 +78,7 @@ public class AdminController {
         return ResponseEntity.ok("🚀 Movie updates saved successfully!");
     }
 
-    // 2. Endpoint to DELETE a movie and trigger the cascade chain link
+    // 5. Endpoint to DELETE a movie and trigger the cascade chain link
     @DeleteMapping("/movies/{id}")
     public ResponseEntity<String> deleteMovie(@PathVariable Long id) {
         Movie movie = cinemaService.getMovieById(id);
@@ -87,5 +88,12 @@ public class AdminController {
 
         cinemaService.deleteMovieById(id);
         return ResponseEntity.ok("🗑️ Movie and all its scheduled showtimes/allocated seats successfully removed.");
+    }
+
+    // 🌟 6. FIXED: Secure endpoint to fetch real-time administrative metrics
+    @GetMapping("/analytics")
+    public ResponseEntity<AnalyticsSummaryDTO> getDashboardMetrics() {
+        AnalyticsSummaryDTO summary = cinemaService.getDashboardAnalytics();
+        return ResponseEntity.ok(summary);
     }
 }
